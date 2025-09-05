@@ -1,5 +1,5 @@
 import axios from 'axios'
-// https://sportify.zeabur.app/
+// https://sportifyplus.zeabur.app/
 const api = axios.create({
   baseURL: 'https://sportifyplus.zeabur.app/api/v1/auth',
   headers: {
