@@ -1,7 +1,10 @@
 import axios from 'axios'
 // https://sportifyplus.zeabur.app/
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 const api = axios.create({
-  baseURL: 'https://sportifyplus.zeabur.app/api/v1/auth',
+  // 將base url設為環境變數
+  baseURL: `${API_BASE_URL}/api/v1/auth`, 
   headers: {
     'Content-Type': 'application/json'
   }
