@@ -45,7 +45,7 @@ import axios from 'axios'
 
 // 為 ChatWidget 創建獨立的 axios 實例，不使用全域攔截器
 const chatAxios = axios.create({
-  baseURL: 'https://sportify.zeabur.app/api/v1'
+  baseURL: 'https://sptfyplus.zeabur.app/api/v1'
 })
 const isOpen = ref(false)
 const input = ref('')
