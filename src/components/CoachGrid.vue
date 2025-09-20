@@ -73,7 +73,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import lineImg from '@/assets/images/line-16.png'
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide } from 'swiper/vue'
@@ -84,12 +85,9 @@ const defaultImg = new URL('@/assets/images/denny.png', import.meta.url).href
 
 async function fetchCoaches() {
   try {
-    const { data } = await axios.get(
-      'https://sportify.zeabur.app/api/v1/courses/coaches',
-      {
-        params: { page: 1 } // 依需要調整
-      }
-    )
+    const { data } = await api.get('/api/v1/courses/coaches', {
+      params: { page: 1 } // 依需要調整
+    })
 
     coaches.value = data.data.map(item => ({
       id: item.coach_id,

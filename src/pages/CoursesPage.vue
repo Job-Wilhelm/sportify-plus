@@ -187,7 +187,8 @@
 <script setup>
 import WaveBannerReverse from '@/components/WaveBannerReverse.vue'
 
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import { ref, onMounted, watch, computed, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -284,26 +285,20 @@ async function fetchCourses() {
   }
 
   if (keyword) {
-    const { data } = await axios.get(
-      `https://sportify.zeabur.app/api/v1/courses/search-courses`,
-      {
-        params: { keyword }
-      }
-    )
+    const { data } = await api.get(`/api/v1/courses/search-courses`, {
+      params: { keyword }
+    })
     allCourses.value = data.data || []
     backendMessage.value = data.message || ''
     paginateCourses()
   } else {
-    const { data } = await axios.get(
-      `https://sportify.zeabur.app/api/v1/courses`,
-      {
-        params: {
-          page: currentPage.value,
-          skillId: currentType.value,
-          sortBy: currentSort.value
-        }
+    const { data } = await api.get(`/api/v1/courses`, {
+      params: {
+        page: currentPage.value,
+        skillId: currentType.value,
+        sortBy: currentSort.value
       }
-    )
+    })
     paginatedCourses.value = data.data
     filters.value = data.meta.filter
     pagination.value = data.meta.pagination
@@ -317,9 +312,7 @@ const hintText = computed(() => {
 })
 
 async function fetchSkill() {
-  const { data } = await axios.get(
-    `https://sportify.zeabur.app/api/v1/courses/course-type`
-  )
+  const { data } = await api.get(`/api/v1/courses/course-type`)
   skills.value = data.data
 }
 
