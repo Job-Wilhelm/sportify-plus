@@ -89,7 +89,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import api from '@/api'
 import { useRouter } from 'vue-router'
 
 const name = ref('')
@@ -124,7 +124,7 @@ async function handleRegister() {
     return
 
   try {
-    await axios.post('https://sportify.zeabur.app/api/v1/auth/users/signup', {
+    await api.post('/api/v1/auth/users/signup', {
       name: name.value,
       email: email.value,
       password: password.value,

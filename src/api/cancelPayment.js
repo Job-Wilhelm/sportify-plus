@@ -1,9 +1,9 @@
-import axios from 'axios'
+import { api } from '@/api' 
 
 export async function cancelPayment(token, MerchantTradeNo) {
   try {
-    const res = await axios.post(
-      'https://sportify.zeabur.app/api/v1/users/cancel-payment',
+    const res = api.post(
+      '/api/v1/users/cancel-payment',
       {
         merchant_trade_no: MerchantTradeNo
       },

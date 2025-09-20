@@ -1,9 +1,9 @@
-import axios from 'axios'
+import { api } from '@/api' 
 
 export async function submitEcpay(token, payment) {
   try {
-    const res = await axios.post(
-      'https://sportify.zeabur.app/api/v1/users/create-payment',
+    const res = api.post(
+      '/api/v1/users/create-payment',
       payment,
       {
         headers: { Authorization: `Bearer ${token}` }
