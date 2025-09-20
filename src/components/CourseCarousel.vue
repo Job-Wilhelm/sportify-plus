@@ -91,7 +91,8 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Navigation, Pagination } from 'swiper/modules'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import defaultCourseImg from '@/assets/images/weight-command.png'
 
 const route = useRoute()
@@ -117,9 +118,7 @@ const courses = ref([])
 
 const fetchRecommendedCourses = async () => {
   try {
-    const res = await axios.get(
-      `https://sportify.zeabur.app/api/v1/courses/${courseId}/recommend`
-    )
+    const res = await api.get(`/api/v1/courses/${courseId}/recommend`)
     courses.value = res.data.data.map(item => ({
       course_id: item.course_id,
       title: item.course_name,

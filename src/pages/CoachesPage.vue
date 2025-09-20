@@ -137,7 +137,8 @@
 <script setup>
 import WaveBannerReverse from '@/components/WaveBannerReverse.vue'
 
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import { ref, onMounted, watch, onBeforeUnmount, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -204,23 +205,18 @@ function onMouseUp() {
 }
 
 async function fetchCoaches() {
-  const { data } = await axios.get(
-    `https://sportify.zeabur.app/api/v1/courses/coaches`,
-    {
-      params: {
-        page: currentPage.value,
-        skillId: currentType.value
-      }
+  const { data } = await api.get(`/api/v1/courses/coaches`, {
+    params: {
+      page: currentPage.value,
+      skillId: currentType.value
     }
-  )
+  })
   coaches.value = data.data
   pagination.value = data.meta.pagination
 }
 
 async function fetchSkill() {
-  const { data } = await axios.get(
-    `https://sportify.zeabur.app/api/v1/courses/course-type`
-  )
+  const { data } = await api.get(`/api/v1/courses/course-type`)
   skills.value = data.data
 }
 
