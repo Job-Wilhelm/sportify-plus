@@ -183,7 +183,8 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import { useRoute } from 'vue-router'
 import { user } from '@/store/user'
 
@@ -296,7 +297,7 @@ async function verifyLogin(token) {
       data: {
         data: { id }
       }
-    } = await axios.get('https://sportify.zeabur.app/api/v1/auth/me', {
+    } = await api.get('/api/v1/auth/me', {
       headers: { Authorization: `Bearer ${token}` }
     })
     return id
@@ -309,7 +310,7 @@ async function getUserData(token, userId) {
   try {
     const {
       data: { data }
-    } = await axios.get(`https://sportify.zeabur.app/api/v1/users/${userId}`, {
+    } = await api.get(`/api/v1/users/${userId}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     return data
@@ -318,10 +319,9 @@ async function getUserData(token, userId) {
   }
 }
 async function getAuthInfo(token) {
-  const { data } = await axios.get(
-    'https://sportify.zeabur.app/api/v1/auth/me',
-    { headers: { Authorization: `Bearer ${token}` } }
-  )
+  const { data } = await api.get('/api/v1/auth/me', {
+    headers: { Authorization: `Bearer ${token}` }
+  })
   return data.data // { id, name, email, is_verified, ... }
 }
 
@@ -329,8 +329,8 @@ async function getAuthInfo(token) {
 async function resendVerifyEmail() {
   try {
     resending.value = true
-    await axios.post(
-      'https://sportify.zeabur.app/api/v1/auth/resend-verification',
+    await api.post(
+      '/api/v1/auth/resend-verification',
       {},
       { headers: { Authorization: `Bearer ${userToken.value}` } }
     )
@@ -382,15 +382,11 @@ const uploadAvatarFile = async file => {
     const formData = new FormData()
     formData.append('avatar', file)
 
-    const response = await axios.post(
-      'https://sportify.zeabur.app/api/v1/users/upload-avatar',
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${userToken.value}`
-        }
+    const response = await api.post('/api/v1/users/upload-avatar', formData, {
+      headers: {
+        Authorization: `Bearer ${userToken.value}`
       }
-    )
+    })
     // 更新頭像 URL
     if (response.data.data.url) {
       userAvatar.value = response.data.data.url
@@ -413,13 +409,9 @@ const uploadAvatarFile = async file => {
 
 // 修改使用者資料API
 async function editUserData(token, userId) {
-  return await axios.patch(
-    `https://sportify.zeabur.app/api/v1/users/${userId}`,
-    editData.value,
-    {
-      headers: { Authorization: `Bearer ${token}` }
-    }
-  )
+  return await api.patch(`/api/v1/users/${userId}`, editData.value, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
 }
 
 // 複製資料, 切換畫面

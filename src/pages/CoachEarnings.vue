@@ -160,7 +160,8 @@
   </section>
 </template>
 <script setup>
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import { ref, onMounted } from 'vue'
 
 import {
@@ -310,13 +311,10 @@ async function submit() {
 
   try {
     const token = localStorage.getItem('token')
-    const { data } = await axios.get(
-      'https://sportify.zeabur.app/api/v1/coaches/courses/analysis',
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        params
-      }
-    )
+    const { data } = await api.get('/api/v1/coaches/courses/analysis', {
+      headers: { Authorization: `Bearer ${token}` },
+      params
+    })
     if (data.status) {
       const result = data.data
       // 儲存完整的課程清單，只做一次並保持完整資料

@@ -156,7 +156,8 @@
 </template>
 
 <script setup>
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -237,13 +238,10 @@ const loadReportData = async () => {
 
   try {
     const token = localStorage.getItem('token')
-    const { data } = await axios.get(
-      `https://sportify.zeabur.app/api/v1/admin/data-analysis`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { startMonth: startString, endMonth: endString }
-      }
-    )
+    const { data } = await api.get(`/api/v1/admin/data-analysis`, {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { startMonth: startString, endMonth: endString }
+    })
     if (data.status) {
       const result = data.data
       totalIncome.value = result.totalIncome || 0

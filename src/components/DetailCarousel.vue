@@ -77,15 +77,15 @@ import { Navigation, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 
 async function getPlayUrlBySkill(skill) {
   if (!skill) return ''
 
-  const { data } = await axios.get(
-    'https://sportify.zeabur.app/api/v1/courses/get-play-url',
-    { params: { skill } }
-  )
+  const { data } = await api.get('/api/v1/courses/get-play-url', {
+    params: { skill }
+  })
 
   if (!data.status) throw new Error(data.message || 'API error')
 

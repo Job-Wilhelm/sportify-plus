@@ -130,7 +130,8 @@
 import { ref, reactive, onMounted } from 'vue'
 import draggable from '@/components/VueDraggable.vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 
 const router = useRouter()
 const courseId = ref(null)
@@ -230,8 +231,8 @@ async function createCourse() {
   }
   console.log(courseData)
   try {
-    const response = await axios.patch(
-      `https://sportify.zeabur.app/api/v1/coaches/courses/${courseId.value}`,
+    const response = await api.patch(
+      `/api/v1/coaches/courses/${courseId.value}`,
       courseData,
       {
         headers: {
@@ -289,8 +290,8 @@ async function uploadCourseThumbnail(file) {
     const formData = new FormData()
     formData.append('courseThumbnail', file)
 
-    const response = await axios.post(
-      'https://sportify.zeabur.app/api/v1/coaches/upload-course-thumbnail',
+    const response = await api.post(
+      '/api/v1/coaches/upload-course-thumbnail',
       formData,
       {
         headers: {

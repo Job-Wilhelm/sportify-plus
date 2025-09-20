@@ -236,7 +236,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import { initUser } from '@/store/user'
 import { cancelPayment } from '@/api/cancelPayment'
 
@@ -281,13 +282,10 @@ async function fetchSubscriptions(page = 1) {
   if (!token || !userId) return route.push('/login')
 
   try {
-    const res = await axios.get(
-      'https://sportify.zeabur.app/api/v1/users/subscriptions',
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { page }
-      }
-    )
+    const res = await api.get('/api/v1/users/subscriptions', {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { page }
+    })
 
     if (res.data.status) {
       const raw = res.data.data
@@ -370,14 +368,11 @@ const subscriptionStatus = computed(() => {
 // 取得可觀看課程類別API
 async function getCourseType(token) {
   try {
-    const res = await axios.get(
-      'https://sportify.zeabur.app/api/v1/users/course-type',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+    const res = await api.get('/api/v1/users/course-type', {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    )
+    })
     return res.data.data
   } catch (error) {
     console.error('取得課程類別失敗:', error)

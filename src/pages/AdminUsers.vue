@@ -410,7 +410,8 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -427,7 +428,7 @@ async function checkAdmin() {
       router.replace({ path: '/' })
       return false
     }
-    const res = await axios.get('https://sportify.zeabur.app/api/v1/auth/me', {
+    const res = await api.get('/api/v1/auth/me', {
       headers: { Authorization: `Bearer ${token}` }
     })
     if (res.data?.status && res.data.data?.role === 'ADMIN') {
@@ -474,13 +475,10 @@ async function fetchUsers(page = 1) {
   try {
     const token = localStorage.getItem('token')
     if (!token) return router.replace('/login')
-    const res = await axios.get(
-      'https://sportify.zeabur.app/api/v1/admin/users',
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { page }
-      }
-    )
+    const res = await api.get('/api/v1/admin/users', {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { page }
+    })
     if (res.data.status) {
       // ← 直接把後端給的全部 data 放進 users
       users.value = res.data.data
@@ -505,10 +503,10 @@ async function fetchUsers(page = 1) {
 // 抓取所有頁
 async function fetchUsersPage(page = 1) {
   const token = localStorage.getItem('token')
-  const res = await axios.get(
-    'https://sportify.zeabur.app/api/v1/admin/users',
-    { headers: { Authorization: `Bearer ${token}` }, params: { page } }
-  )
+  const res = await api.get('/api/v1/admin/users', {
+    headers: { Authorization: `Bearer ${token}` },
+    params: { page }
+  })
   return { data: res.data.data, pagination: res.data.pagination }
 }
 
@@ -577,13 +575,10 @@ const subscriptionMeta = ref({ page: 1, total_pages: 1 })
 async function fetchSubscriptions(userId, page = 1) {
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get(
-      `https://sportify.zeabur.app/api/v1/admin/subscriptions/${userId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { page }
-      }
-    )
+    const res = await api.get(`/api/v1/admin/subscriptions/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { page }
+    })
     if (res.data.status) {
       records.value = res.data.data.map(item => ({
         id: item.id,

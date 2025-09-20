@@ -92,7 +92,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import { useRouter } from 'vue-router'
 
 const nickname = ref('')
@@ -127,7 +128,7 @@ async function handleRegister() {
     return
 
   try {
-    await axios.post('https://sportify.zeabur.app/api/v1/auth/coaches/signup', {
+    await api.post('/api/v1/auth/coaches/signup', {
       nickname: nickname.value,
       email: email.value,
       password: password.value,

@@ -3,7 +3,8 @@ import { ref, computed, watch } from 'vue'
 import draggable from 'vuedraggable'
 import { v4 as uuidv4 } from 'uuid'
 import { UpChunk } from '@mux/upchunk'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 
 const chapters = ref([])
 const isDragging = ref(false)
@@ -129,15 +130,11 @@ const onFileChange = async (section, file) => {
       uploadData.courseId = props.courseId
     }
 
-    const { data } = await axios.post(
-      'https://sportify.zeabur.app/api/v1/mux/upload-url',
-      uploadData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+    const { data } = await api.post('/api/v1/mux/upload-url', uploadData, {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    )
+    })
 
     // 將 course_id 傳出去
     if (data.course_id) {

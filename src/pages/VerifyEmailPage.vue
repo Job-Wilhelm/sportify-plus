@@ -11,7 +11,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 
 import { user } from '@/store/user'
 
@@ -36,14 +37,10 @@ onMounted(async () => {
   }
 
   try {
-    await axios.patch(
-      'https://sportify.zeabur.app/api/v1/auth/user-verification',
-      null,
-      {
-        params: { token },
-        headers: { Authorization: `Bearer ${authToken}` }
-      }
-    )
+    await api.patch('/api/v1/auth/user-verification', null, {
+      params: { token },
+      headers: { Authorization: `Bearer ${authToken}` }
+    })
 
     if (user.value) user.value.is_verified = true
 

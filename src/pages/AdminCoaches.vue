@@ -660,7 +660,8 @@
 <script setup>
 import { ref, computed, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -675,7 +676,7 @@ async function checkAdmin() {
       router.replace({ path: '/' })
       return false
     }
-    const res = await axios.get('https://sportify.zeabur.app/api/v1/auth/me', {
+    const res = await api.get('/api/v1/auth/me', {
       headers: { Authorization: `Bearer ${token}` }
     })
     if (res.data?.status && res.data.data?.role === 'ADMIN') {
@@ -741,13 +742,10 @@ function openPreview(src, alt = '') {
 async function fetchCoachesPage(page = 1) {
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get(
-      'https://sportify.zeabur.app/api/v1/admin/coaches',
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { page } // 如果後端不接受 limit，就只傳 page
-      }
-    )
+    const res = await api.get('/api/v1/admin/coaches', {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { page } // 如果後端不接受 limit，就只傳 page
+    })
     if (!res.data.status) {
       throw new Error(res.data.message || '取得教練資料失敗')
     }
@@ -924,10 +922,9 @@ const visiblePages = computed(() => {
 async function fetchCoachDetail(coachId) {
   try {
     const token = localStorage.getItem('token')
-    const { data } = await axios.get(
-      `https://sportify.zeabur.app/api/v1/admin/coaches/${coachId}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    const { data } = await api.get(`/api/v1/admin/coaches/${coachId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
     if (!data.status) {
       throw new Error(data.message || '讀取失敗')
     }
@@ -959,8 +956,8 @@ async function updateVerifyStatus(approved, commentTxt) {
 
   try {
     // ⬇︎ 後端通常會回最新狀態；若沒有回，改完再手動塞
-    const res = await axios.patch(
-      `https://sportify.zeabur.app/api/v1/admin/coaches/${selectedCoach.value.id}/review`,
+    const res = await api.patch(
+      `/api/v1/admin/coaches/${selectedCoach.value.id}/review`,
       { status: newStatus, review_comment: commentTxt },
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -1080,12 +1077,9 @@ async function fetchCourses() {
   try {
     const token = localStorage.getItem('token')
     // 不帶任何參數，因為後端不接受 page/limit
-    const res = await axios.get(
-      'https://sportify.zeabur.app/api/v1/admin/courses',
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    )
+    const res = await api.get('/api/v1/admin/courses', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
 
     if (res.data.status) {
       courses.value = res.data.data

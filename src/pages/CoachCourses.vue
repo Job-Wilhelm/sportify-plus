@@ -283,7 +283,8 @@
 <script setup>
 import { onMounted, ref, nextTick } from 'vue'
 import draggable from '@/components/VueDraggable.vue'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 
 const coach = ref([])
 const courses = ref([])
@@ -364,12 +365,9 @@ async function getCourses() {
       return
     }
 
-    const res = await axios.get(
-      'https://sportify.zeabur.app/api/v1/coaches/courses',
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    )
+    const res = await api.get('/api/v1/coaches/courses', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
     courses.value = res.data.data.courses
     coach.value = res.data.data.coach
   } catch (error) {
@@ -381,8 +379,8 @@ async function openEditModal(course) {
   try {
     // 取得課程詳細資料
     const token = localStorage.getItem('token')
-    const response = await axios.get(
-      `https://sportify.zeabur.app/api/v1/coaches/courses/${course.course_id}`,
+    const response = await api.get(
+      `/api/v1/coaches/courses/${course.course_id}`,
       {
         headers: { Authorization: `Bearer ${token}` }
       }
@@ -470,8 +468,8 @@ async function uploadCourseThumbnail(file) {
     const formData = new FormData()
     formData.append('courseThumbnail', file)
 
-    const response = await axios.post(
-      'https://sportify.zeabur.app/api/v1/coaches/upload-course-thumbnail',
+    const response = await api.post(
+      '/api/v1/coaches/upload-course-thumbnail',
       formData,
       {
         headers: {
@@ -558,8 +556,8 @@ async function updateCourse() {
       courseData.image_public_id = thumbnailPublicId.value
     }
 
-    const response = await axios.patch(
-      `https://sportify.zeabur.app/api/v1/coaches/courses/${editForm.value.id}`,
+    const response = await api.patch(
+      `/api/v1/coaches/courses/${editForm.value.id}`,
       courseData,
       {
         headers: {

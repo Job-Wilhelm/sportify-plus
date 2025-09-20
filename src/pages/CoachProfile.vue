@@ -459,7 +459,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import { user, initUser } from '@/store/user'
 import { DatePicker as VDatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
@@ -771,15 +772,11 @@ const uploadImage = async (file, imgName, endpoint) => {
   formData.append(imgName, file)
 
   const token = localStorage.getItem('token')
-  const response = await axios.post(
-    `https://sportify.zeabur.app/api/v1/coaches/${endpoint}`,
-    formData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+  const response = await api.post(`/api/v1/coaches/${endpoint}`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`
     }
-  )
+  })
   const imageData = {
     url: response.data.data.url,
     publicId: response.data.data.publicId
@@ -797,15 +794,11 @@ const uploadMultipleImages = async (files, imgName, endpoint) => {
   })
 
   const token = localStorage.getItem('token')
-  const response = await axios.post(
-    `https://sportify.zeabur.app/api/v1/coaches/${endpoint}`,
-    formData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+  const response = await api.post(`/api/v1/coaches/${endpoint}`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`
     }
-  )
+  })
 
   const imageData = response.data.dataArray
   return imageData
@@ -884,8 +877,8 @@ const handleSubmit = async () => {
     submitData.value.favorite_words = '先跳過謝謝'
 
     // 提交主要資料
-    const response = await axios.patch(
-      `https://sportify.zeabur.app/api/v1/coaches/${coachProfile.value.id}`,
+    const response = await api.patch(
+      `/api/v1/coaches/${coachProfile.value.id}`,
       submitData.value,
       {
         headers: {
@@ -1005,12 +998,9 @@ const triggerLicenseSelect = () => {
 const loadCoachProfile = async () => {
   try {
     const token = localStorage.getItem('token')
-    const response = await axios.get(
-      `https://sportify.zeabur.app/api/v1/coaches/${user.value?.id}`,
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    )
+    const response = await api.get(`/api/v1/coaches/${user.value?.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
     if (response.data.status) {
       const data = response.data.data
       coachLicenses.value = data.licenses.map(file => ({

@@ -596,7 +596,8 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import HlsPlayer from '@/components/HlsPlayer.vue'
 
 function pickNextLesson(list) {
@@ -671,22 +672,18 @@ const videoSrc = computed(
 )
 
 async function fetchSidebar(id, token) {
-  const { data } = await axios.get(
-    `https://sportify.zeabur.app/api/v1/users/courses/${id}/sidebar`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  )
+  const { data } = await api.get(`/api/v1/users/courses/${id}/sidebar`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
   return data.data
 }
 
 async function fetchDetails(id, chapterId, token) {
   // 不帶 chapterId；後端會回「預設章節」的影片與 course info
-  const { data } = await axios.get(
-    `https://sportify.zeabur.app/api/v1/users/courses/${id}/details`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-      params: { chapterId }
-    }
-  )
+  const { data } = await api.get(`/api/v1/users/courses/${id}/details`, {
+    headers: { Authorization: `Bearer ${token}` },
+    params: { chapterId }
+  })
   return data.data // 真正 payload
 }
 
@@ -796,9 +793,7 @@ function changePage(page) {
 
 async function fetchRatings(courseId) {
   try {
-    const res = await axios.get(
-      `https://sportify.zeabur.app/api/v1/courses/${courseId}/ratings`
-    )
+    const res = await api.get(`/api/v1/courses/${courseId}/ratings`)
     userRatings.value = res.data.data
   } catch (error) {
     console.error('評價載入失敗', error)
@@ -849,8 +844,8 @@ async function finishCurrentLesson(videoEl) {
 
   try {
     const token = localStorage.getItem('token')
-    await axios.post(
-      'https://sportify.zeabur.app/api/v1/users/view-progress',
+    await api.post(
+      '/api/v1/users/view-progress',
       {
         sub_chapter_id: lesson.chapterId,
         watched_seconds: Math.floor(videoEl.duration),
@@ -869,10 +864,9 @@ async function finishCurrentLesson(videoEl) {
 onMounted(async () => {
   try {
     const token = localStorage.getItem('token') || ''
-    const { data } = await axios.get(
-      'https://sportify.zeabur.app/api/v1/users/subscriptions',
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    const { data } = await api.get('/api/v1/users/subscriptions', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
 
     if (data.status) {
       memberPlan.value = pickCurrentPlan(data.data)

@@ -64,7 +64,8 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import Hls from 'hls.js'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import mux from 'mux-embed'
 
 const showPanel = ref(false)
@@ -107,10 +108,9 @@ function openPanel() {
 async function fetchPlanAndSetCap() {
   try {
     const token = localStorage.getItem('token') || ''
-    const { data } = await axios.get(
-      'https://sportify.zeabur.app/api/v1/users/subscriptions',
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    const { data } = await api.get('/api/v1/users/subscriptions', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
     capHeight.value = PLAN_CAP[pickCurrentPlan(data.data)] ?? 720
   } catch (e) {
     console.error('讀訂閱失敗 fallback 720p', e)

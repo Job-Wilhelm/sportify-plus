@@ -79,7 +79,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 
 const password = ref('')
 const confirmPassword = ref('')
@@ -117,13 +118,10 @@ async function handleResetPassword() {
   isLoading.value = true
 
   try {
-    await axios.patch(
-      `https://sportify.zeabur.app/api/v1/auth/reset-password?token=${token.value}`,
-      {
-        new_password: password.value,
-        password_check: confirmPassword.value
-      }
-    )
+    await api.patch(`/api/v1/auth/reset-password?token=${token.value}`, {
+      new_password: password.value,
+      password_check: confirmPassword.value
+    })
 
     alert('密碼重設成功！請使用新密碼登入。')
     router.push('/login')

@@ -664,7 +664,8 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import HlsPlayer from '@/components/HlsPlayer.vue'
 
 const detailModal = ref(null)
@@ -697,7 +698,7 @@ async function checkAdmin() {
       router.replace({ path: '/' })
       return false
     }
-    const res = await axios.get('https://sportify.zeabur.app/api/v1/auth/me', {
+    const res = await api.get('/api/v1/auth/me', {
       headers: { Authorization: `Bearer ${token}` }
     })
     if (res.data?.status && res.data.data?.role === 'ADMIN') {
@@ -838,10 +839,10 @@ async function fetchAllCourses() {
     const token = localStorage.getItem('token')
 
     /* ❶ 先抓 page=1 */
-    const { data: first } = await axios.get(
-      'https://sportify.zeabur.app/api/v1/admin/courses',
-      { headers: { Authorization: `Bearer ${token}` }, params: { page: 1 } }
-    )
+    const { data: first } = await api.get('/api/v1/admin/courses', {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { page: 1 }
+    })
 
     // 塞進陣列
     courses.value.push(...first.data)
@@ -852,7 +853,7 @@ async function fetchAllCourses() {
 
     for (let p = 2; p <= totalPages; p++) {
       requests.push(
-        axios.get('https://sportify.zeabur.app/api/v1/admin/courses', {
+        api.get('/api/v1/admin/courses', {
           headers: { Authorization: `Bearer ${token}` },
           params: { page: p }
         })
@@ -911,8 +912,8 @@ async function approveReview() {
   try {
     const courseId = selectedDetail.value.id
     const token = localStorage.getItem('token')
-    await axios.patch(
-      `https://sportify.zeabur.app/api/v1/admin/courses/${courseId}/review`,
+    await api.patch(
+      `/api/v1/admin/courses/${courseId}/review`,
       {
         status: 'approved',
         review_comment: commentTxt
@@ -950,8 +951,8 @@ async function rejectReview() {
   try {
     const courseId = selectedDetail.value.id
     const token = localStorage.getItem('token')
-    await axios.patch(
-      `https://sportify.zeabur.app/api/v1/admin/courses/${courseId}/review`,
+    await api.patch(
+      `/api/v1/admin/courses/${courseId}/review`,
       {
         status: 'rejected',
         review_comment: commentTxt
@@ -1037,13 +1038,10 @@ async function fetchRatings(courseId, page = 1) {
   loadingRatings.value = true
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get(
-      `https://sportify.zeabur.app/api/v1/admin/courses/${courseId}/ratings`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { page, limit: userRatings.value.pagination.limit }
-      }
-    )
+    const res = await api.get(`/api/v1/admin/courses/${courseId}/ratings`, {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { page, limit: userRatings.value.pagination.limit }
+    })
 
     if (res.data.status) {
       userRatings.value.paginatedData = res.data.data.paginatedData
@@ -1089,10 +1087,9 @@ async function openDetailModal(courseId) {
   try {
     const token = localStorage.getItem('token')
     // 1) 先呼叫 /details 拿 description、chapters、coach 等
-    const res = await axios.get(
-      `https://sportify.zeabur.app/api/v1/admin/courses/${courseId}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    const res = await api.get(`/api/v1/admin/courses/${courseId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
     if (!res.data.status) {
       throw new Error(res.data.message || '取得 Detail 失敗')
     }
@@ -1254,8 +1251,8 @@ async function confirmDelete() {
   try {
     const token = localStorage.getItem('token')
     // 這裡的 selectedCourseId 必須已經在「開啟評價 Modal」時設定過
-    await axios.delete(
-      `https://sportify.zeabur.app/api/v1/admin/courses/${selectedCourseId.value}/ratings/${pendingDeleteRatingId.value}`,
+    await api.delete(
+      `/api/v1/admin/courses/${selectedCourseId.value}/ratings/${pendingDeleteRatingId.value}`,
       { headers: { Authorization: `Bearer ${token}` } }
     )
     // 刪除成功後，重新撈當前頁的評價

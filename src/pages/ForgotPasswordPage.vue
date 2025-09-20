@@ -62,7 +62,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 
 const email = ref('')
 const emailError = ref(false)
@@ -82,12 +83,9 @@ async function handleForgotPassword() {
   isLoading.value = true
 
   try {
-    await axios.post(
-      'https://sportify.zeabur.app/api/v1/auth/forgot-password',
-      {
-        email: email.value
-      }
-    )
+    await api.post('/api/v1/auth/forgot-password', {
+      email: email.value
+    })
     alert('已發送密碼重設連結至您的 Email，請查看信箱。')
     router.push('/login')
   } catch (error) {

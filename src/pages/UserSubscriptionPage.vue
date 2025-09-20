@@ -153,7 +153,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import { useRouter } from 'vue-router'
 import { submitEcpay } from '@/api/submitEcpay'
 
@@ -216,10 +217,9 @@ onMounted(async () => {
     const token = localStorage.getItem('token')
     if (!token) return
 
-    const { data } = await axios.get(
-      'https://sportify.zeabur.app/api/v1/auth/me',
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    const { data } = await api.get('/api/v1/auth/me', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
     console.log('auth/me 回傳:', data)
 
     userInfo.value = data.data
@@ -235,9 +235,7 @@ onMounted(async () => {
 onMounted(async () => {
   try {
     // 取得運動種類
-    const sportsRes = await axios.get(
-      'https://sportify.zeabur.app/api/v1/users/show-sports-type'
-    )
+    const sportsRes = await api.get('/api/v1/users/show-sports-type')
     const { indoor, outdoor } = sportsRes.data.data
 
     groups.value = [
@@ -258,9 +256,7 @@ onMounted(async () => {
     ]
 
     //  取得方案資料
-    const planRes = await axios.get(
-      'https://sportify.zeabur.app/api/v1/users/plan-info'
-    )
+    const planRes = await api.get('/api/v1/users/plan-info')
     const planData = planRes.data.data
 
     plans.value = planData.map(plan => {
@@ -375,8 +371,8 @@ async function submitTrial() {
       return
     }
 
-    await axios.post(
-      'https://sportify.zeabur.app/api/v1/users/subscription',
+    await api.post(
+      '/api/v1/users/subscription',
       {
         subscription_name: 'Eagerness方案-7天試用',
         course_type: []
@@ -407,8 +403,8 @@ async function submit() {
       alert('請先登入學員帳號')
       return
     }
-    await axios
-      .post('https://sportify.zeabur.app/api/v1/users/subscription', payload, {
+    await api
+      .post('/api/v1/users/subscription', payload, {
         headers: {
           Authorization: `Bearer ${token}`
         }

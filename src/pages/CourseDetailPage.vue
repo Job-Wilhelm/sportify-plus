@@ -440,7 +440,8 @@ import { ref, computed, onMounted } from 'vue'
 import WaveBanner from '@/components/WaveBanner.vue'
 import CourseCarousel from '@/components/CourseCarousel.vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import HlsPlayer from '@/components/HlsPlayer.vue'
 
 const route = useRoute()
@@ -472,18 +473,14 @@ const trailerSrc = computed(
 onMounted(async () => {
   try {
     const courseId = route.params.courseId
-    const res = await axios.get(
-      `https://sportify.zeabur.app/api/v1/courses/${courseId}/details`
-    )
+    const res = await api.get(`/api/v1/courses/${courseId}/details`)
     courseDetail.value = res.data.data
 
     // 初始化章節展開狀態
     openIndexes.value = courseDetail.value.chapters.map(() => false)
 
     // 取得評價資料
-    const ratingsRes = await axios.get(
-      `https://sportify.zeabur.app/api/v1/courses/${courseId}/ratings`
-    )
+    const ratingsRes = await api.get(`/api/v1/courses/${courseId}/ratings`)
     userRatings.value = ratingsRes.data.data
   } catch (err) {
     console.error('載入課程詳細或評價資料失敗', err)
@@ -528,9 +525,7 @@ function changePage(page) {
 
 async function fetchRatings(courseId) {
   try {
-    const res = await axios.get(
-      `https://sportify.zeabur.app/api/v1/courses/${courseId}/ratings`
-    )
+    const res = await api.get(`/api/v1/courses/${courseId}/ratings`)
     userRatings.value = res.data.data
   } catch (error) {
     console.error('評價載入失敗', error)

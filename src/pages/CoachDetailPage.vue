@@ -46,7 +46,8 @@
 </template>
 
 <script setup>
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -68,9 +69,7 @@ const experienceItems = computed(() => {
 
 async function fetchCoachDetail(id) {
   try {
-    const { data } = await axios.get(
-      `https://sportify.zeabur.app/api/v1/courses/coaches/${id}`
-    )
+    const { data } = await api.get(`/api/v1/courses/coaches/${id}`)
     coachInfo.value = data.data // 依實際結構調整
   } catch (err) {
     console.error('讀取教練失敗', err)

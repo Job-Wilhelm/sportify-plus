@@ -334,7 +334,8 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import { api } from '@/api'
 import { user, initUser } from '@/store/user'
 
 import learningCourseImg1 from '@/assets/images/learningCourse-1.png'
@@ -412,10 +413,9 @@ function changePage(page) {
 
 const fetchCourseTypes = async token => {
   try {
-    const res = await axios.get(
-      'https://sportify.zeabur.app/api/v1/users/course-type',
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    const res = await api.get('/api/v1/users/course-type', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
     courseTypes.value = res.data.data.map(item => item.course_type)
   } catch (err) {
     console.error('載入課程類別失敗', err)
@@ -425,13 +425,10 @@ const fetchCourseTypes = async token => {
 const fetchAllUserCourses = async token => {
   try {
     // 先抓第 1 頁，並拿到總頁數
-    const first = await axios.get(
-      'https://sportify.zeabur.app/api/v1/users/courses',
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { page: 1 }
-      }
-    )
+    const first = await api.get('/api/v1/users/courses', {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { page: 1 }
+    })
     const allData = [...first.data.data]
     const totalPages = first.data.meta.pagination.total_pages
 
@@ -439,7 +436,7 @@ const fetchAllUserCourses = async token => {
     const requests = []
     for (let p = 2; p <= totalPages; p++) {
       requests.push(
-        axios.get('https://sportify.zeabur.app/api/v1/users/courses', {
+        api.get('/api/v1/users/courses', {
           headers: { Authorization: `Bearer ${token}` },
           params: { page: p }
         })
@@ -483,18 +480,15 @@ const toggleFavorite = async course => {
 
   try {
     if (course.isFavorited) {
-      await axios.delete(
-        `https://sportify.zeabur.app/api/v1/users/${userId}/favorites/${courseId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+      await api.delete(`/api/v1/users/${userId}/favorites/${courseId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
         }
-      )
+      })
       course.isFavorited = false
     } else {
-      await axios.post(
-        `https://sportify.zeabur.app/api/v1/users/${userId}/favorites/${courseId}`,
+      await api.post(
+        `/api/v1/users/${userId}/favorites/${courseId}`,
         {},
         {
           headers: {
@@ -523,8 +517,8 @@ const submitRating = async () => {
   const userId = userData.id
   const courseId = selectedCourse.value.course_id || selectedCourse.value.id
 
-  const postUrl = `https://sportify.zeabur.app/api/v1/users/${userId}/ratings/${courseId}`
-  const patchUrl = `https://sportify.zeabur.app/api/v1/users/${userId}/rating/${courseId}`
+  const postUrl = `/api/v1/users/${userId}/ratings/${courseId}`
+  const patchUrl = `/api/v1/users/${userId}/rating/${courseId}`
 
   const payload = {
     score: rating.value,
@@ -532,7 +526,7 @@ const submitRating = async () => {
   }
 
   try {
-    await axios.post(postUrl, payload, {
+    await api.post(postUrl, payload, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -544,7 +538,7 @@ const submitRating = async () => {
     const message = error.response?.data?.message
     if (message === '已有評價資料') {
       try {
-        await axios.patch(patchUrl, payload, {
+        await api.patch(patchUrl, payload, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -603,12 +597,9 @@ const openRatingModal = async course => {
   }
 
   try {
-    const res = await axios.get(
-      `https://sportify.zeabur.app/api/v1/users/courses/${courseId}/ratings`,
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    )
+    const res = await api.get(`/api/v1/users/courses/${courseId}/ratings`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
 
     const allRatings = res.data.data?.paginatedData || []
     const userRating = allRatings.find(r => r.username === username)
@@ -652,14 +643,11 @@ const fetchUserRatingByCourseId = async course => {
   const courseId = course.course_id || course.id
 
   try {
-    const res = await axios.get(
-      `https://sportify.zeabur.app/api/v1/users/courses/${courseId}/ratings`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+    const res = await api.get(`/api/v1/users/courses/${courseId}/ratings`, {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    )
+    })
 
     const ratings = res.data.data?.paginatedData || []
     const match = ratings.find(r => r.username === userData.displayName)
